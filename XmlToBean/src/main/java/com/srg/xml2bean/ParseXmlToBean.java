@@ -127,6 +127,12 @@ public class ParseXmlToBean {
                         //获取属性的Field对象
                         Field field = tempClass.getDeclaredField(fieldName);
 
+                        //构建此属性的set()的方法名
+                        String methodName = "set" + firstToBig(fieldName);
+
+                        //根据方法名，以及参数类型获取方法的Method对象，因为已经知道为List,所以写死为List.class
+                        Method method = tempClass.getMethod(methodName, List.class);
+
                         //获取泛型
                         Type genericType = field.getGenericType();
 
@@ -145,29 +151,36 @@ public class ParseXmlToBean {
                             objMap.put(split[i - 1] + "." + fieldName, oList);
                         }
 
-                        //获取map里的split[i - 1] + "." + split[i]规则设定作为Key的嵌套Bean对象
-                        Object o = objMap.get(split[i - 1] + "." + split[i]);
+                        // split.length - 1 > i 说明有oList的泛型类型不是基本常用类型(包括String)，而是自定义的普通javabean
+                        //否则说明oList的泛型类型是常用的数据类型
+                        if (split.length - 1 > i){
 
-                        //如果o为null，则根据type Class初始化对象，并put到objMap里面，同时添加到集合里
-                        if (o == null) {
-                            o = type.newInstance();
-                            objMap.put(split[i - 1] + "." + split[i], o);
+
+                            //获取map里的split[i - 1] + "." + split[i]规则设定作为Key的嵌套Bean对象
+                            Object o = objMap.get(split[i - 1] + "." + split[i]);
+
+                            //如果o为null，则根据type Class初始化对象，并put到objMap里面，同时添加到集合里
+                            if (o == null) {
+                                o = type.newInstance();
+                                objMap.put(split[i - 1] + "." + split[i], o);
+                                oList.add(o);
+                            }
+
+                            //调用invoke方法，即通过set()进行初始化
+                            method.invoke(tempObj, oList);
+
+                            //把tempClass,temObj换掉刚刚的此属性的Class对象，Object对象，以进入下一层反射
+                            //注意：这里不是变为List,而是改变成List集合指定泛型类型生成的对象
+                            tempClass = type;
+                            tempObj = o;
+
+                        }else {
+                            //根据type以及hashmap创建oList里面的泛型对象并添加到oList里面去
+                            Object o = converData(type, hashMap.get(key));
                             oList.add(o);
                         }
 
-                        //构建此属性的set()的方法名
-                        String methodName = "set" + firstToBig(fieldName);
 
-                        //根据方法名，以及参数类型获取方法的Method对象，因为已经知道为List,所以写死为List.class
-                        Method method = tempClass.getMethod(methodName, List.class);
-
-                        //调用invoke方法，即通过set()进行初始化
-                        method.invoke(tempObj, oList);
-
-                        //把tempClass,temObj换掉刚刚的此属性的Class对象，Object对象，以进入下一层反射
-                        //注意：这里不是变为List,而是改变成List集合指定泛型类型生成的对象
-                        tempClass = type;
-                        tempObj = o;
 
                         continue;
                     }

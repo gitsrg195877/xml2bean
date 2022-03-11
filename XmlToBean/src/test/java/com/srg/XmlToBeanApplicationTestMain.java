@@ -10,15 +10,15 @@ import java.io.File;
  * @create : 2022/3/9
  * @describe :
  **/
-public class XmlToBeanApplicationMain {
+public class XmlToBeanApplicationTestMain {
 
 
     public static void main(String[] args) throws Exception {
 
 
-        File templateFile = new File("C:\\srgWorkspace\\ideaWorkpace\\XmlToBean\\src\\main\\resources\\templateTest.xml");
+        File templateFile = new File("C:\\srgWorkspace\\MyGitHub\\xml2bean\\XmlToBean\\src\\main\\resources\\TemplateTest.xml");
 
-        File sourceFile = new File("C:\\srgWorkspace\\ideaWorkpace\\XmlToBean\\src\\main\\resources\\sourceTest.xml");
+        File sourceFile = new File("C:\\srgWorkspace\\MyGitHub\\xml2bean\\XmlToBean\\src\\main\\resources\\sourceTest.xml");
 
 
         String className = "com.srg.bean.TradeBean";
