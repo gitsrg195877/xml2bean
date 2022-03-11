@@ -122,10 +122,19 @@ public class ParseXmlToBean {
                         int strIndex = split[i].indexOf("_");
 
                         //截取下划线之前的字符+"s"为属性名
-                        String fieldName = split[i].substring(0, strIndex) + "s";
+                        String fieldName = split[i].substring(0, strIndex);
 
-                        //获取属性的Field对象
-                        Field field = tempClass.getDeclaredField(fieldName);
+                        //获取属性的Field对象,如果此类中没有，则从父类中去查找，一直查到Object,???????????????需要解决运行时异常：没有父类的异常
+                        Field field = null;
+                        Class tempTempClass = tempClass;
+                        while (field == null){
+                            try {
+                                field = tempTempClass.getDeclaredField(fieldName);
+                            }catch (NoSuchFieldException e){
+                                System.out.println(fieldName+"属性从父类中查找");
+                            }
+                            tempTempClass = tempTempClass.getSuperclass();
+                        }
 
                         //构建此属性的set()的方法名
                         String methodName = "set" + firstToBig(fieldName);
@@ -176,7 +185,7 @@ public class ParseXmlToBean {
 
                         }else {
                             //根据type以及hashmap创建oList里面的泛型对象并添加到oList里面去
-                            Object o = converData(type, hashMap.get(key));
+                            Object o = ConvertData.convertData(type, hashMap.get(key));
                             oList.add(o);
                         }
 
@@ -185,8 +194,19 @@ public class ParseXmlToBean {
                         continue;
                     }
 
-                    //获取属性的Field对象
-                    Field field = tempClass.getDeclaredField(split[i]);
+                    //获取属性的Field对象        ???????????????需要解决运行时异常：没有父类的异常
+
+                    Field field = null;
+                    Class tempTempClass = tempClass;
+                    while (field == null){
+                        try {
+                            field = tempTempClass.getDeclaredField(split[i]);
+                        }catch (NoSuchFieldException e){
+                            System.out.println(split[i]+"属性从父类中查找");
+                        }
+                        tempTempClass = tempTempClass.getSuperclass();
+                    }
+
 
                     //获取字节码对象
                     Class<?> type = field.getType();
@@ -222,7 +242,7 @@ public class ParseXmlToBean {
                     } else {
 
                         //根据type对字符创初始化相应类型的属性值
-                        Object o = converData(type, hashMap.get(key));
+                        Object o = ConvertData.convertData(type, hashMap.get(key));
 
                         //Method对象调用invoke方法，以调用set()方法set值
                         method.invoke(tempObj, o);
@@ -232,37 +252,6 @@ public class ParseXmlToBean {
             }
         }
         return obj;
-    }
-
-    /**
-     * 根据常用数据类型的字节码对象，通过判断，对字符串初始化相应类型的属性值
-     **/
-    public static Object converData(Class<?> cla, String str) {
-        if (Integer.class.toString().equals(cla.toString())) {
-            Integer integer = Integer.valueOf(str);
-            return integer;
-        } else if (String.class.toString().equals(cla.toString())) {
-            return str;
-        } else if (Long.class.toString().equals(cla.toString())) {
-            Long aLong = Long.valueOf(str);
-            return aLong;
-        } else if (Double.class.toString().equals(cla.toString())) {
-            Double aDouble = Double.valueOf(str);
-            return aDouble;
-        } else if (Date.class.toString().equals(cla.toString())) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-            Date time = null;
-            try {
-                time = format.parse(str);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return time;
-        } else if (Boolean.class.toString().equals(cla.toString())) {
-            Boolean aBoolean = Boolean.valueOf(str);
-            return aBoolean;
-        }
-        return null;
     }
 
 

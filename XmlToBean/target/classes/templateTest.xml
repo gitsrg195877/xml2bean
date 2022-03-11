@@ -18,21 +18,21 @@
 		</tradeHeader>
 		<leg>
 			<component>
-				<spot_price>${t.leg_1.component.spotPrice}</spot_price>
-				<all_in>${t.leg_1.component.allIn}</all_in>
+				<spot_price>${t.legs_1.component.spotPrice}</spot_price>
+				<all_in>${t.legs_1.component.allIn}</all_in>
 			</component>
-			<dealType>${t.leg_1.dealType}</dealType>
-			<legType>${t.leg_1.legType}</legType>
-			<amount>${t.leg_1.amount}</amount>
+			<dealType>${t.legs_1.dealType}</dealType>
+			<legType>${t.legs_1.legType}</legType>
+			<amount>${t.legs_1.amount}</amount>
 		</leg>
 		<leg>
 			<component>
-				<spot_price>${t.leg_2.component.spotPrice}</spot_price>
-				<all_in>${t.leg_2.component.allIn}</all_in>
+				<spot_price>${t.legs_2.component.spotPrice}</spot_price>
+				<all_in>${t.legs_2.component.allIn}</all_in>
 			</component>
-			<legType>${t.leg_2.legType}</legType>
-			<amount>${t.leg_2.amount}</amount>
-			<dealType>${t.leg_2.dealType}</dealType>
+			<legType>${t.legs_2.legType}</legType>
+			<amount>${t.legs_2.amount}</amount>
+			<dealType>${t.legs_2.dealType}</dealType>
 		</leg>
 	</trade>
 	<amount>${t.amount}</amount>
