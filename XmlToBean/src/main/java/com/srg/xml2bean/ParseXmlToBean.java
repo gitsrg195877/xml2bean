@@ -1,5 +1,6 @@
 package com.srg.xml2bean;
 
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -36,8 +37,18 @@ public class ParseXmlToBean {
         Document sourceDocument = new SAXReader().read(sourceFile);
         Set<String> keySet = hashMap.keySet();
         for (String key : keySet) {
-            Node node = sourceDocument.selectSingleNode(hashMap.get(key));
-            hashMap.put(key, node.getText());
+            if (hashMap.get(key).contains("@")){
+                int i = hashMap.get(key).indexOf("@");
+                String attributeName = hashMap.get(key).substring(i+1,hashMap.get(key).length());
+                String Xpath = hashMap.get(key).substring(0,i-1);
+                Element node = (Element) sourceDocument.selectSingleNode(Xpath);
+                Attribute attribute = node.attribute(attributeName);
+                hashMap.put(key, attribute.getText());
+            }else {
+                Element node = (Element) sourceDocument.selectSingleNode(hashMap.get(key));
+                hashMap.put(key, node.getText());
+            }
+
         }
 
         //通过反射获取javaBean对象
@@ -53,6 +64,14 @@ public class ParseXmlToBean {
      * @return: HashMap
      **/
     public static HashMap<String, String> getAllXpath(Element element, HashMap<String, String> map) {
+
+        List<Attribute> attributeList = element.attributes();
+        for (Attribute attribute : attributeList) {
+            if (attribute.getText().matches("^\\$\\{+.*\\}$")) {
+                String key = attribute.getText().substring(2, attribute.getText().length() - 1);
+                map.put(key, attribute.getUniquePath());
+            }
+        }
 
         //如果此节点的elements()方法返回的是空列表，说明下属没子节点，则获取他的text值
         //如果不是空列表，则循环此列表里的Element对象,并递归调用
@@ -160,6 +179,9 @@ public class ParseXmlToBean {
                             objMap.put(split[i - 1] + "." + fieldName, oList);
                         }
 
+                        //调用invoke方法，即通过set()进行初始化
+                        method.invoke(tempObj, oList);
+
                         // split.length - 1 > i 说明有oList的泛型类型不是基本常用类型(包括String)，而是自定义的普通javabean
                         //否则说明oList的泛型类型是常用的数据类型
                         if (split.length - 1 > i){
@@ -175,8 +197,7 @@ public class ParseXmlToBean {
                                 oList.add(o);
                             }
 
-                            //调用invoke方法，即通过set()进行初始化
-                            method.invoke(tempObj, oList);
+
 
                             //把tempClass,temObj换掉刚刚的此属性的Class对象，Object对象，以进入下一层反射
                             //注意：这里不是变为List,而是改变成List集合指定泛型类型生成的对象
@@ -187,6 +208,7 @@ public class ParseXmlToBean {
                             //根据type以及hashmap创建oList里面的泛型对象并添加到oList里面去
                             Object o = ConvertData.convertData(type, hashMap.get(key));
                             oList.add(o);
+
                         }
 
 

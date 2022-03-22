@@ -29,6 +29,8 @@ public class TradeBean {
 
     private List<TradeLegBean> legs;
 
+    private List<Integer> legIds;
+
 //    private TradeLegBean leg1;
 //
 //    private TradeLegBean leg2;

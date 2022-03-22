@@ -16,7 +16,7 @@
 			<tradeDate>${t.tradeDate}</tradeDate>
 			<tradeTime>${t.tradeTime}</tradeTime>
 		</tradeHeader>
-		<leg>
+		<leg id = "${t.legIds_1}">
 			<component>
 				<spot_price>${t.legs_1.component.spotPrice}</spot_price>
 				<all_in>${t.legs_1.component.allIn}</all_in>
@@ -25,7 +25,7 @@
 			<legType>${t.legs_1.legType}</legType>
 			<amount>${t.legs_1.amount}</amount>
 		</leg>
-		<leg>
+		<leg id = "${t.legIds_2}">
 			<component>
 				<spot_price>${t.legs_2.component.spotPrice}</spot_price>
 				<all_in>${t.legs_2.component.allIn}</all_in>
