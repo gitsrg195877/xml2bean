@@ -1,16 +1,15 @@
 package com.srg.xml2bean;
 
+
+
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -31,7 +30,7 @@ public class ParseXmlToBean {
         Document templateDocument = new SAXReader().read(templateFile);
         Element rootElement = templateDocument.getRootElement();
         HashMap<String, String> hashMap = new HashMap<>();
-        getAllXpath(rootElement, hashMap);
+        getAllXpath(rootElement,rootElement, hashMap);
 
         //根据路径到source取出所有的数据
         Document sourceDocument = new SAXReader().read(sourceFile);
@@ -63,8 +62,22 @@ public class ParseXmlToBean {
      * @description: 解析templete获取所有data的路径，并获取bean属性名,属性名为key，路径为value
      * @return: HashMap
      **/
-    public static HashMap<String, String> getAllXpath(Element element, HashMap<String, String> map) {
+    public static HashMap<String, String> getAllXpath(Element rootElement,Element element, HashMap<String, String> map) {
 
+        //判断此节点是否有"href"名的attribute
+        Attribute href = element.attribute("href");
+        if(href != null){
+            System.out.println(element.getName()+"节点引用了内容"+href.getText());
+            String text = href.getText();
+            Element idElement = getHrefToIdElement(text, rootElement);
+            System.out.println("##############引用的节点为：" + idElement.getName()+idElement.getUniquePath());
+            HashMap<String, String> hashMap = getHrefToIdPath(element, idElement,map);
+            return hashMap;
+        }
+
+
+        //获取attribute里数据含有${}特殊标识符的路径
+        //获取所有的attribute,再循环判断数据是否含有${}
         List<Attribute> attributeList = element.attributes();
         for (Attribute attribute : attributeList) {
             if (attribute.getText().matches("^\\$\\{+.*\\}$")) {
@@ -89,7 +102,76 @@ public class ParseXmlToBean {
             List<Element> elements = element.elements();
             for (Element element1 : elements) {
                 //递归调用
-                getAllXpath(element1, map);
+                getAllXpath(rootElement,element1, map);
+            }
+            return map;
+        }
+    }
+
+    /**
+     *  根据href(attribute)的值，在rootElement中获取id(attribute)为相应值的节点
+     **/
+    private static Element getHrefToIdElement(String hrefText,Element element){
+
+        //如果此节点attribute(id)为null，或者attribute(id)里的数据跟hrefText不匹配，则查询它的子节点
+        //否则返回此节点
+        if(element.attribute("id") == null || (!element.attribute("id").getText().equals(hrefText))){
+            //如果子节点为为null（即列表里没有元素），则return null;否则递归判断它的子节点
+            if(element.elements().toString().equals("[]")){      //注意：列表为null跟没有元素不一样;
+                return null;
+            }else {
+                List<Element> elements = element.elements();
+                for (Element element_1 : elements) {
+                    Element hrefToIdElement = getHrefToIdElement(hrefText, element_1);
+                    if (hrefToIdElement != null){
+                        return hrefToIdElement;
+                    }
+                }
+            }
+        }else {
+            return element;
+        }
+        return null;
+    }
+
+    /**
+     * 根据hrefElement引用的idElement，根据相同的子节点，获取idElement的路
+     **/
+    private static HashMap<String,String> getHrefToIdPath(Element hrefElement,Element idElement,HashMap<String,String> map){
+
+        System.out.println(hrefElement.getName()+"获取href内容的path");
+        System.out.println(idElement.getName()+"为引用内容");
+        //获取attribute里数据含有${}特殊标识符的路径
+        //获取所有的attribute,再循环判断数据是否含有${}
+        List<Attribute> attributeList = hrefElement.attributes();
+        for (Attribute attribute : attributeList) {
+            if (attribute.getText().matches("^\\$\\{+.*\\}$")) {
+                String key = attribute.getText().substring(2, attribute.getText().length() - 1);
+                Attribute attribute1 = idElement.attribute(attribute.getName());
+                String valuePath = attribute1.getUniquePath();
+                map.put(key, valuePath);
+            }
+        }
+
+        //如果此节点的elements()方法返回的是空列表，说明没子节点，则获取他的text值
+        //如果不是空列表，则循环此列表里的Element对象,并递归调用
+        if (hrefElement.elements().toString().equals("[]")) {
+            //匹配${}
+            if (hrefElement.getText().matches("^\\$\\{+.*\\}$")) {
+                //截取${}里面的字符作为key
+                String key = hrefElement.getText().substring(2, hrefElement.getText().length() - 1);
+                String valuePath = idElement.getUniquePath();
+                //把此element的唯一路径put进Map集合里
+                map.put(key, valuePath);
+                return map;
+            }
+            return map;
+        } else {
+            List<Element> elements = hrefElement.elements();
+            for (Element hrefElement_1 : elements) {
+                Element idElement_1 = idElement.element(hrefElement_1.getName());
+                //递归调用
+                getHrefToIdPath(hrefElement_1,idElement_1, map);
             }
             return map;
         }

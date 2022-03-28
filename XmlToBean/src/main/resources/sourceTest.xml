@@ -11,8 +11,10 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               fpmlVersion="5-11"
               xsi:schemaLocation="http://www.fpml.org/FpML-5/confirmation ../../fpml-main-5-11.xsd http://www.w3.org/2000/09/xmldsig# ../../xmldsig-core-schema.xsd">
-	<trade >
+	<trade>
+		<buyerParty href="partyA"/>
 		<tradeHeader>
+			<sellerPar href="partyB"/>
 			<tradeDate>20220303</tradeDate>
 			<tradeTime>10:00:34</tradeTime>
 		</tradeHeader>
@@ -37,4 +39,12 @@
 	</trade>
 	<amount>100</amount>
 	<pair>usd/cny</pair>
+	<party id="partyA">
+		<partyId idsche="www.888.com">888888</partyId>
+		<partyName>发发发</partyName>
+	</party>
+	<party id="partyB">
+		<partyId idsche="www.666.com">666666</partyId>
+		<partyName>溜溜溜</partyName>
+	</party>
 </dataDocument>

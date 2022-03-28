@@ -31,6 +31,10 @@ public class TradeBean {
 
     private List<Integer> legIds;
 
+    private Party buyer;
+
+    private Party seller;
+
 //    private TradeLegBean leg1;
 //
 //    private TradeLegBean leg2;
