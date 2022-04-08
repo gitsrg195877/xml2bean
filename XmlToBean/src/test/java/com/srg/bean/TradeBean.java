@@ -19,6 +19,8 @@ import java.util.List;
 @ToString
 public class TradeBean {
 
+    private String testNull;
+
     private Date tradeDate;
 
     private String tradeTime;

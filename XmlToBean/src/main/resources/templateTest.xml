@@ -35,7 +35,7 @@
 		</leg>
 		<leg id = "${t.legIds_2}">
 			<component>
-				<spot_price>${t.legs_2.component.spotPrice}</spot_price>
+				<spot_price testNull="${t.testNull}">${t.legs_2.component.spotPrice}</spot_price>
 				<all_in>${t.legs_2.component.allIn}</all_in>
 			</component>
 			<legType>${t.legs_2.legType}</legType>

@@ -1,5 +1,7 @@
 package com.srg.xml2bean;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -10,16 +12,20 @@ import java.util.Date;
  * @create : 2022/3/11
  * @describe :
  **/
+
+
 public class ConvertData {
 
 
     /**
      * 根据常用数据类型的字节码对象，通过判断，对字符串初始化相应类型的属性值
      **/
-    public static Object convertData(Class<?> cla, String str) {
-
+    public static Object convertData(Class<?> cla, String str) throws Exception {
+        if(str == null){
+            return null;
+        }
         //基本数据类型的封装类
-        if (Integer.class == cla) {
+        else if (Integer.class == cla) {
             Integer data = Integer.valueOf(str);
             return data;
         } else if (Long.class == cla) {
@@ -97,7 +103,11 @@ public class ConvertData {
 
         //下面需要根据实际情况拓展相应条件的枚举类
 
+        //如果没有相应的数据类型，则抛出异常
+        else {
+            Exception exception = new Exception("未定义相应的类型转换");
+            throw exception;
+        }
 
-        return null;
     }
 }

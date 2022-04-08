@@ -29,7 +29,7 @@
 		</leg>
 		<leg id="102">
 			<component>
-				<spot_price>117.68</spot_price>
+				<spot_price testNull="${t.testNull}">117.68</spot_price>
 				<all_in>119.94</all_in>
 			</component>
 			<legType>Floating</legType>
