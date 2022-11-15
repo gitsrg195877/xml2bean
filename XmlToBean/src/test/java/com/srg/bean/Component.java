@@ -1,5 +1,6 @@
 package com.srg.bean;
 
+import com.srg.AbstractBaseBean;
 import lombok.Data;
 
 /**
@@ -10,7 +11,7 @@ import lombok.Data;
 
 
 @Data
-public class Component {
+public class Component extends AbstractBaseBean {
 
     private Double spotPrice;
 

@@ -1,6 +1,4 @@
-package com.srg.xml2bean;
-
-import lombok.extern.slf4j.Slf4j;
+package com.srg;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,27 +24,20 @@ public class ConvertData {
         }
         //基本数据类型的封装类
         else if (Integer.class == cla) {
-            Integer data = Integer.valueOf(str);
-            return data;
+            return Integer.valueOf(str);
         } else if (Long.class == cla) {
-            Long data = Long.valueOf(str);
-            return data;
+            return Long.valueOf(str);
         } else if (Byte.class == cla) {
-            Byte data = Byte.valueOf(str);
-            return data;
+            return Byte.valueOf(str);
         }
         else if (Short.class == cla) {
-            Short data = Short.valueOf(str);
-            return data;
+            return Short.valueOf(str);
         }else if (Boolean.class == cla) {
-            Boolean data = Boolean.valueOf(str);
-            return data;
+            return Boolean.valueOf(str);
         }else if (Double.class == cla) {
-            Double data = Double.valueOf(str);
-            return data;
+            return Double.valueOf(str);
         }else if (Float.class == cla) {
-            Float data = Float.valueOf(str);
-            return data;
+            return Float.valueOf(str);
         }
 
         //基本数据类型
@@ -96,8 +87,7 @@ public class ConvertData {
             int year = Integer.parseInt(split[0]);
             int month = Integer.parseInt(split[1]);
             int day = Integer.parseInt(split[2]);
-            LocalDate localDate = LocalDate.of(year, month, day);
-            return localDate;
+            return LocalDate.of(year, month, day);
         }
 
 

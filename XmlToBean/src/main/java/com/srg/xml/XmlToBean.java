@@ -1,7 +1,8 @@
-package com.srg.xml2bean;
+package com.srg.xml;
 
 
 
+import com.srg.ConvertData;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -17,7 +18,7 @@ import java.util.*;
  * @create : 2022/3/9
  * @description :
  **/
-public class ParseXmlToBean {
+public class XmlToBean {
 
     //数据标识符"${}",ex: ${t.parties#1.partyId}
     private static final String DATA_LOGO_SIGN = "^\\$\\{+.*\\}$";
@@ -179,8 +180,6 @@ public class ParseXmlToBean {
      * @return: Object
      **/
     public static Object getObjectBeanByReflect(HashMap<String, String> hashMap, Class<Object> clz) throws Exception{
-
-
         //初始化根对象
         Object obj = clz.getConstructor().newInstance();
         //防止遍历到下一个key时，type通过反射初始化生成的对象不是同一个，即针对下面for循环定义一个全局的objMap
